@@ -78,7 +78,6 @@ jobs:
         with:
           lfs: true
           fetch-depth: 0
-          ref: v${{ needs.check-commit-messages.outputs.current_version }}
       - id: create_release
         uses: ncipollo/release-action@v1.12.0
         with:
