@@ -4,11 +4,16 @@ import "testing"
 
 type Record interface {
 	Type() string
+	String() string
 }
 
 type Base struct {
 	Raw string
 	T   *testing.T
+}
+
+func (base Base) String() string {
+	return base.Raw
 }
 
 type A struct {
