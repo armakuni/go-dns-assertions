@@ -28,3 +28,19 @@ jobs:
           go-version: ${{ env.go-version }}
       - name: go test
         run: go test ./...
+
+  check-commit-messages:
+    name: check conventional commits
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup-cocogitto
+        uses: jaxxstorm/action-install-gh-release@v1.10.0
+        with:
+          repo: cocogitto/cocogitto
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - run: ls -la
+      - run: git log
+      - name: cog check
+        run: cog check
