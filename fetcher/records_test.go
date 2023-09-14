@@ -14,7 +14,7 @@ func TestAImplementsRecord(t *testing.T) {
 		},
 		Ipv4Addr: "1.2.3.4",
 	}
-	assert.Equal(t, record.Type(), "A")
+	assert.Equal(t, "A", record.Type())
 }
 
 func TestCnameImplementsRecord(t *testing.T) {
@@ -25,5 +25,5 @@ func TestCnameImplementsRecord(t *testing.T) {
 		},
 		Target: "something.example.com.",
 	}
-	assert.Equal(t, record.Type(), "CNAME")
+	assert.Equal(t, "CNAME", record.Type())
 }
