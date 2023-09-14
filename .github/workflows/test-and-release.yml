@@ -32,6 +32,10 @@ jobs:
   check-commit-messages:
     name: check conventional commits
     runs-on: ubuntu-latest
+    outputs:
+      version_bump: ${{ steps.current_version.outputs.current_version != steps.previous_version.outputs.previous_version }}
+      current_version: ${{ steps.current_version.outputs.current_version }}
+      previous_version: ${{ steps.previous_version.outputs.previous_version }}
     steps:
       - name: setup-cocogitto
         uses: jaxxstorm/action-install-gh-release@v1.10.0
@@ -40,7 +44,45 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - run: ls -la
-      - run: git log
-      - name: cog check
-        run: cog check
+      - run: git fetch --tags origin
+      - run: cog check
+      - id: previous_version
+        run: |
+          cog get-version | tee .version
+          echo "previous_version=$( cat .version )"  >> "$GITHUB_OUTPUT"
+          rm .version
+        shell: bash
+      - name: configure git
+        run: |
+          git config --global user.name "cog-bot"
+          git config --global user.email "cog@armakuni.com"
+      - id: release
+        run: cog bump --auto
+      - id: current_version
+        run: |
+          cog get-version | tee .version
+          echo "current_version=$( cat .version )"  >> "$GITHUB_OUTPUT"
+          rm .version
+        shell: bash
+
+  release:
+    name: tag version
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && needs.check-commit-messages.outputs.version_bump
+    needs:
+      - go-fmt
+      - go-test
+      - check-commit-messages
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          lfs: true
+          fetch-depth: 0
+          ref: v${{ needs.check-commit-messages.outputs.current_version }}
+      - id: create_release
+        uses: ncipollo/release-action@v1.12.0
+        with:
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Release v${{ needs.check-commit-messages.outputs.current_version }}
+          tag: v${{ needs.check-commit-messages.outputs.current_version }}
