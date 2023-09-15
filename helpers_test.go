@@ -14,7 +14,7 @@ type testErrorable struct {
 }
 
 func (t *testErrorable) AssertRaisedError(expected string) {
-	assert.Equal(t.t, *t.errorMessage, expected)
+	assert.Equal(t.t, expected, *t.errorMessage)
 }
 
 func (t *testErrorable) Errorf(format string, args ...any) {
