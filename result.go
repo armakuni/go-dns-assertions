@@ -1,12 +1,12 @@
 package dnsassertions
 
-import "github.com/armakuni/go-dns-assertions/fetcher"
+import "github.com/armakuni/go-dns-assertions/dnsclient"
 
-type Errorable interface {
+type ErrorTrigger interface {
 	Errorf(format string, args ...any)
 }
 
-type LookupResultWithErrorable struct {
-	*fetcher.LookupResult
-	Errorable Errorable
+type ResultWithErrorTrigger struct {
+	*dnsclient.Result
+	ErrorTrigger ErrorTrigger
 }

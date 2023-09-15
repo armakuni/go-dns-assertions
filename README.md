@@ -20,13 +20,13 @@ You can now write tests using Go test that look like this:
 
 ```go
 func TestFetchDNSRecords(t *testing.T) {
-	fetcher := dnsassertions.NewTestFetcher(t)
+	client := dnsassertions.NewTestClient(t)
 
-	lookup := fetcher.FetchDNSRecords("mysite.com", "8.8.8.8")
-	lookup.AssertHasARecord("1.2.3.4")
+	result := client.FetchDNSRecords("mysite.com", "8.8.8.8")
+	result.AssertHasARecord("1.2.3.4")
 
-	lookupWww := fetcher.FetchDNSRecords("www.mysite.com", "8.8.8.8")
-	lookupWww.AssertHasCNAMERecord("mysite.com.")
+	resultWww := client.FetchDNSRecords("www.mysite.com", "8.8.8.8")
+	resultWww.AssertHasCNAMERecord("mysite.com.")
 }
 ```
 

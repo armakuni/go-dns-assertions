@@ -6,11 +6,11 @@ import (
 )
 
 func TestFetchDNSRecords(t *testing.T) {
-	fetcher := dnsassertions.NewTestFetcher(t)
+	client := dnsassertions.NewTestClient(t)
 
-	lookup := fetcher.FetchDNSRecords("armakuni.com", "8.8.8.8")
-	lookup.AssertHasARecord("198.49.23.144")
+	result := client.FetchDNSRecords("armakuni.com", "8.8.8.8")
+	result.AssertHasARecord("198.49.23.144")
 
-	lookupWww := fetcher.FetchDNSRecords("www.armakuni.com", "8.8.8.8")
-	lookupWww.AssertHasCNAMERecord("ext-cust.squarespace.com.")
+	resultWww := client.FetchDNSRecords("www.armakuni.com", "8.8.8.8")
+	resultWww.AssertHasCNAMERecord("ext-cust.squarespace.com.")
 }
