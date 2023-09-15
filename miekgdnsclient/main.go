@@ -1,37 +1,37 @@
-package miekgdnsfetcher
+package miekgdnsclient
 
 import (
 	"fmt"
-	"github.com/armakuni/go-dns-assertions/fetcher"
+	"github.com/armakuni/go-dns-assertions/dnsclient"
 	"github.com/miekg/dns"
 	"net"
 )
 
-func New() fetcher.Fetcher {
-	return &miekgDnsFetcher{}
+func New() dnsclient.DNSClient {
+	return &miekgDnsClient{}
 }
 
-type miekgDnsFetcher struct{}
+type miekgDnsClient struct{}
 
-func (miekgDnsFetcher) FetchDNSRecords(fqdn string, dnsServer string) (*fetcher.LookupResult, error) {
+func (miekgDnsClient) LookupAllRecords(fqdn string, dnsServer string) (*dnsclient.Result, error) {
 	client := new(dns.Client)
 	serverAddress := net.JoinHostPort(dnsServer, "53")
 
 	records, err := fetchARecords(fqdn, client, serverAddress)
-	result := &fetcher.LookupResult{
+	result := &dnsclient.Result{
 		FQDN:    fqdn,
 		Records: records,
 	}
 	return result, err
 }
 
-func fetchARecords(fqdn string, client *dns.Client, serverAddress string) ([]fetcher.Record, error) {
+func fetchARecords(fqdn string, client *dns.Client, serverAddress string) ([]dnsclient.Record, error) {
 	response, err := performLookup(fqdn, dns.TypeA, client, serverAddress)
 	if err != nil {
 		return nil, err
 	}
 
-	var results []fetcher.Record
+	var results []dnsclient.Record
 
 	for _, answer := range response.Answer {
 		if record := recordFromDnsRR(answer); record != nil {
@@ -42,20 +42,20 @@ func fetchARecords(fqdn string, client *dns.Client, serverAddress string) ([]fet
 	return results, nil
 }
 
-func recordFromDnsRR(answer dns.RR) fetcher.Record {
-	base := &fetcher.Base{
+func recordFromDnsRR(answer dns.RR) dnsclient.Record {
+	base := &dnsclient.Common{
 		Raw: answer.String(),
 	}
 
 	switch answer.Header().Rrtype {
 	case dns.TypeCNAME:
-		return &fetcher.CNAME{
-			Base:   base,
+		return &dnsclient.CNAME{
+			Common: base,
 			Target: answer.(*dns.CNAME).Target,
 		}
 	case dns.TypeA:
-		return &fetcher.A{
-			Base:     base,
+		return &dnsclient.A{
+			Common:   base,
 			Ipv4Addr: answer.(*dns.A).A.String(),
 		}
 	}

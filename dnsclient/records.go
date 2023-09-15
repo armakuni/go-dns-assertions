@@ -1,20 +1,20 @@
-package fetcher
+package dnsclient
 
 type Record interface {
 	Type() string
 	String() string
 }
 
-type Base struct {
+type Common struct {
 	Raw string
 }
 
-func (base Base) String() string {
+func (base Common) String() string {
 	return base.Raw
 }
 
 type A struct {
-	*Base
+	*Common
 	Ipv4Addr string
 }
 
@@ -23,7 +23,7 @@ func (_ A) Type() string {
 }
 
 type CNAME struct {
-	*Base
+	*Common
 	Target string
 }
 

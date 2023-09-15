@@ -3,49 +3,49 @@ package dnsassertions_test
 import (
 	"fmt"
 	"github.com/armakuni/go-dns-assertions"
-	"github.com/armakuni/go-dns-assertions/fetcher"
+	"github.com/armakuni/go-dns-assertions/dnsclient"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-type testErrorable struct {
+type testErrorTrigger struct {
 	t            *testing.T
 	errorMessage *string
 }
 
-func (t *testErrorable) AssertRaisedError(expected string) {
+func (t *testErrorTrigger) AssertRaisedError(expected string) {
 	assert.Equal(t.t, expected, *t.errorMessage)
 }
 
-func (t *testErrorable) Errorf(format string, args ...any) {
+func (t *testErrorTrigger) Errorf(format string, args ...any) {
 	message := fmt.Sprintf(format, args...)
 	t.errorMessage = &message
 }
 
-func (t *testErrorable) AssertNoErrorRaised() {
+func (t *testErrorTrigger) AssertNoErrorRaised() {
 	if t.errorMessage != nil {
 		t.t.Errorf("Unexpected error message \"%s\" was raised", *t.errorMessage)
 	}
 }
 
-func createExampleResponse(t *testing.T, records []fetcher.Record) (*dnsassertions.LookupResultWithErrorable, *testErrorable) {
-	errorable := testErrorable{t: t}
+func createExampleResponse(t *testing.T, records []dnsclient.Record) (*dnsassertions.ResultWithErrorTrigger, *testErrorTrigger) {
+	errorTrigger := testErrorTrigger{t: t}
 
-	result := dnsassertions.LookupResultWithErrorable{
-		LookupResult: &fetcher.LookupResult{
+	result := dnsassertions.ResultWithErrorTrigger{
+		Result: &dnsclient.Result{
 			FQDN:    "example.com.",
 			Records: records,
 		},
-		Errorable: &errorable,
+		ErrorTrigger: &errorTrigger,
 	}
 
-	return &result, &errorable
+	return &result, &errorTrigger
 }
 
-func createExampleARecord(ipv4Addr string) *fetcher.A {
-	return &fetcher.A{Base: &fetcher.Base{Raw: "A\t" + ipv4Addr}, Ipv4Addr: ipv4Addr}
+func createExampleARecord(ipv4Addr string) *dnsclient.A {
+	return &dnsclient.A{Common: &dnsclient.Common{Raw: "A\t" + ipv4Addr}, Ipv4Addr: ipv4Addr}
 }
 
-func createExampleCNAMERecord(target string) *fetcher.CNAME {
-	return &fetcher.CNAME{Base: &fetcher.Base{Raw: "CNAME\t" + target}, Target: target}
+func createExampleCNAMERecord(target string) *dnsclient.CNAME {
+	return &dnsclient.CNAME{Common: &dnsclient.Common{Raw: "CNAME\t" + target}, Target: target}
 }

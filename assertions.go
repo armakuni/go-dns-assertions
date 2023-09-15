@@ -2,56 +2,56 @@ package dnsassertions
 
 import (
 	"fmt"
-	"github.com/armakuni/go-dns-assertions/fetcher"
+	"github.com/armakuni/go-dns-assertions/dnsclient"
 	"strings"
 )
 
 // AssertHasARecord fails the test when there are no A records with a matching IP address.
-func (lookup *LookupResultWithErrorable) AssertHasARecord(expectedIpv4Addr string) {
+func (result *ResultWithErrorTrigger) AssertHasARecord(expectedIpv4Addr string) {
 	aRecords := getRecordsByType(
-		lookup.LookupResult,
+		result.Result,
 		"A",
-		func(record fetcher.Record) *fetcher.A { return record.(*fetcher.A) },
+		func(record dnsclient.Record) *dnsclient.A { return record.(*dnsclient.A) },
 	)
 	assertHasRecord(
-		lookup,
+		result,
 		"A",
 		aRecords,
-		func(record *fetcher.A) string { return record.Ipv4Addr },
+		func(record *dnsclient.A) string { return record.Ipv4Addr },
 		expectedIpv4Addr,
 	)
 }
 
 // AssertHasCNAMERecord fails the test when there are no CNAME records with a matching target.
-func (lookup *LookupResultWithErrorable) AssertHasCNAMERecord(expectedTarget string) {
+func (result *ResultWithErrorTrigger) AssertHasCNAMERecord(expectedTarget string) {
 	cnameRecords := getRecordsByType(
-		lookup.LookupResult,
+		result.Result,
 		"CNAME",
-		func(record fetcher.Record) *fetcher.CNAME { return record.(*fetcher.CNAME) },
+		func(record dnsclient.Record) *dnsclient.CNAME { return record.(*dnsclient.CNAME) },
 	)
 	assertHasRecord(
-		lookup,
+		result,
 		"CNAME",
 		cnameRecords,
-		func(record *fetcher.CNAME) string { return record.Target },
+		func(record *dnsclient.CNAME) string { return record.Target },
 		expectedTarget,
 	)
 }
 
-func assertHasRecord[RecordType fetcher.Record](
-	lookup *LookupResultWithErrorable,
+func assertHasRecord[RecordType dnsclient.Record](
+	result *ResultWithErrorTrigger,
 	recordType string,
 	records []RecordType,
 	getValue func(record RecordType) string,
 	expectedValue string,
 ) {
-	if err := checkMatchingRecord(lookup.LookupResult, recordType, records, getValue, expectedValue); err != nil {
-		lookup.Errorable.Errorf(err.Error())
+	if err := checkMatchingRecord(result.Result, recordType, records, getValue, expectedValue); err != nil {
+		result.ErrorTrigger.Errorf(err.Error())
 	}
 }
 
-func checkMatchingRecord[RecordType fetcher.Record](
-	lookup *fetcher.LookupResult,
+func checkMatchingRecord[RecordType dnsclient.Record](
+	result *dnsclient.Result,
 	recordType string,
 	records []RecordType,
 	getValue func(record RecordType) string,
@@ -70,19 +70,19 @@ func checkMatchingRecord[RecordType fetcher.Record](
 	return fmt.Errorf(
 		"DNS asserting failed: No "+recordType+" record with value %s found for %s.\nRecords Found:\n%s",
 		expectedValue,
-		lookup.FQDN,
-		displayRecords(lookup),
+		result.FQDN,
+		displayRecords(result),
 	)
 }
 
-func getRecordsByType[RecordType fetcher.Record](
-	lookup *fetcher.LookupResult,
+func getRecordsByType[RecordType dnsclient.Record](
+	result *dnsclient.Result,
 	recordType string,
 
-	cast func(record fetcher.Record) RecordType,
+	cast func(record dnsclient.Record) RecordType,
 ) []RecordType {
 	var records []RecordType
-	for _, record := range lookup.Records {
+	for _, record := range result.Records {
 		if record.Type() == recordType {
 			records = append(records, cast(record))
 		}
@@ -90,6 +90,6 @@ func getRecordsByType[RecordType fetcher.Record](
 	return records
 }
 
-func displayRecords(lookup *fetcher.LookupResult) string {
-	return "\t" + strings.Join(lookup.GetRawRecords(), "\n\t") + "\n"
+func displayRecords(result *dnsclient.Result) string {
+	return "\t" + strings.Join(result.GetRawRecords(), "\n\t") + "\n"
 }
