@@ -8,10 +8,7 @@ import (
 
 func TestAImplementsRecord(t *testing.T) {
 	var record fetcher.Record = &fetcher.A{
-		Base: &fetcher.Base{
-			Raw: "RAW RECORD TEXT",
-			T:   t,
-		},
+		Base:     &fetcher.Base{Raw: "RAW RECORD TEXT"},
 		Ipv4Addr: "1.2.3.4",
 	}
 	assert.Equal(t, "A", record.Type())
@@ -20,10 +17,7 @@ func TestAImplementsRecord(t *testing.T) {
 
 func TestCnameImplementsRecord(t *testing.T) {
 	var record fetcher.Record = &fetcher.CNAME{
-		Base: &fetcher.Base{
-			Raw: "RAW RECORD TEXT",
-			T:   t,
-		},
+		Base:   &fetcher.Base{Raw: "RAW RECORD TEXT"},
 		Target: "something.example.com.",
 	}
 	assert.Equal(t, "CNAME", record.Type())
