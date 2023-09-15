@@ -1,7 +1,5 @@
 package fetcher
 
-import "testing"
-
 type Record interface {
 	Type() string
 	String() string

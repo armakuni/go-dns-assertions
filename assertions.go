@@ -1,6 +1,7 @@
 package dnsassertions
 
 import (
+	"fmt"
 	"github.com/armakuni/go-dns-assertions/fetcher"
 	"strings"
 )
@@ -37,34 +38,50 @@ func (lookup *LookupResultWithErrorable) AssertHasCNAMERecord(expectedTarget str
 	)
 }
 
-func assertHasRecord[T fetcher.Record](
+func assertHasRecord[RecordType fetcher.Record](
 	lookup *LookupResultWithErrorable,
 	recordType string,
-	records []T,
-	getValue func(record T) string,
+	records []RecordType,
+	getValue func(record RecordType) string,
 	expectedValue string,
 ) {
+	if err := checkMatchingRecord(lookup.LookupResult, recordType, records, getValue, expectedValue); err != nil {
+		lookup.Errorable.Errorf(err.Error())
+	}
+}
+
+func checkMatchingRecord[RecordType fetcher.Record](
+	lookup *fetcher.LookupResult,
+	recordType string,
+	records []RecordType,
+	getValue func(record RecordType) string,
+	expectedValue string,
+) error {
 	if len(records) <= 0 {
-		lookup.Errorable.Errorf("DNS assertion failed: no " + recordType + " records found")
-		return
+		return fmt.Errorf("DNS assertion failed: no " + recordType + " records found")
 	}
 
 	for _, record := range records {
 		if getValue(record) == expectedValue {
-			return
+			return nil
 		}
 	}
 
-	lookup.Errorable.Errorf(
+	return fmt.Errorf(
 		"DNS asserting failed: No "+recordType+" record with value %s found for %s.\nRecords Found:\n%s",
 		expectedValue,
 		lookup.FQDN,
-		displayRecords(lookup.LookupResult),
+		displayRecords(lookup),
 	)
 }
 
-func getRecordsByType[T fetcher.Record](lookup *fetcher.LookupResult, recordType string, cast func(record fetcher.Record) T) []T {
-	var records []T
+func getRecordsByType[RecordType fetcher.Record](
+	lookup *fetcher.LookupResult,
+	recordType string,
+
+	cast func(record fetcher.Record) RecordType,
+) []RecordType {
+	var records []RecordType
 	for _, record := range lookup.Records {
 		if record.Type() == recordType {
 			records = append(records, cast(record))
@@ -74,13 +91,5 @@ func getRecordsByType[T fetcher.Record](lookup *fetcher.LookupResult, recordType
 }
 
 func displayRecords(lookup *fetcher.LookupResult) string {
-	return "\t" + strings.Join(getRawRecords(lookup), "\n\t") + "\n"
-}
-
-func getRawRecords(lookup *fetcher.LookupResult) []string {
-	var result []string
-	for _, record := range lookup.Records {
-		result = append(result, record.String())
-	}
-	return result
+	return "\t" + strings.Join(lookup.GetRawRecords(), "\n\t") + "\n"
 }
