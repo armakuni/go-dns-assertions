@@ -9,7 +9,6 @@ type Record interface {
 
 type Base struct {
 	Raw string
-	T   *testing.T
 }
 
 func (base Base) String() string {
