@@ -8,7 +8,7 @@ env:
 
 jobs:
   go-fmt:
-    name: run tests
+    name: run lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
