@@ -30,3 +30,12 @@ type CNAME struct {
 func (_ CNAME) Type() string {
 	return "CNAME"
 }
+
+type TXT struct {
+	*Common
+	Txt string
+}
+
+func (_ TXT) Type() string {
+	return "TXT"
+}

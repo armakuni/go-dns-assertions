@@ -23,3 +23,12 @@ func TestCNAMEImplementsRecord(t *testing.T) {
 	assert.Equal(t, "CNAME", record.Type())
 	assert.Equal(t, "RAW RECORD TEXT", record.String())
 }
+
+func TestTXTImplementsRecord(t *testing.T) {
+	var record dnsclient.Record = &dnsclient.TXT{
+		Common: &dnsclient.Common{Raw: "RAW RECORD TEXT"},
+		Txt:    "The content",
+	}
+	assert.Equal(t, "TXT", record.Type())
+	assert.Equal(t, "RAW RECORD TEXT", record.String())
+}

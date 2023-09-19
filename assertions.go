@@ -38,6 +38,22 @@ func (result *ResultWithErrorTrigger) AssertHasCNAMERecord(expectedTarget string
 	)
 }
 
+// AssertHasTXTRecord fails the test when there are no TXT records with a matching target.
+func (result *ResultWithErrorTrigger) AssertHasTXTRecord(expectedTxt string) {
+	cnameRecords := getRecordsByType(
+		result.Result,
+		"TXT",
+		func(record dnsclient.Record) *dnsclient.TXT { return record.(*dnsclient.TXT) },
+	)
+	assertHasRecord(
+		result,
+		"TXT",
+		cnameRecords,
+		func(record *dnsclient.TXT) string { return record.Txt },
+		expectedTxt,
+	)
+}
+
 func assertHasRecord[RecordType dnsclient.Record](
 	result *ResultWithErrorTrigger,
 	recordType string,
