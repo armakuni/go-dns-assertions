@@ -49,3 +49,7 @@ func createExampleARecord(ipv4Addr string) *dnsclient.A {
 func createExampleCNAMERecord(target string) *dnsclient.CNAME {
 	return &dnsclient.CNAME{Common: &dnsclient.Common{Raw: "CNAME\t" + target}, Target: target}
 }
+
+func createExampleTXTRecord(txt string) *dnsclient.TXT {
+	return &dnsclient.TXT{Common: &dnsclient.Common{Raw: "TXT\t" + txt}, Txt: txt}
+}

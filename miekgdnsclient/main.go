@@ -5,6 +5,7 @@ import (
 	"github.com/armakuni/go-dns-assertions/dnsclient"
 	"github.com/miekg/dns"
 	"net"
+	"strings"
 )
 
 func New() dnsclient.DNSClient {
@@ -17,16 +18,36 @@ func (miekgDnsClient) LookupAllRecords(fqdn string, dnsServer string) (*dnsclien
 	client := new(dns.Client)
 	serverAddress := net.JoinHostPort(dnsServer, "53")
 
-	records, err := fetchARecords(fqdn, client, serverAddress)
+	aRecords, err := fetchARecords(fqdn, client, serverAddress)
+	txtRecords, err := fetchTxtRecords(fqdn, client, serverAddress)
+
 	result := &dnsclient.Result{
 		FQDN:    fqdn,
-		Records: records,
+		Records: append(aRecords, txtRecords...),
 	}
+
 	return result, err
 }
 
 func fetchARecords(fqdn string, client *dns.Client, serverAddress string) ([]dnsclient.Record, error) {
 	response, err := performLookup(fqdn, dns.TypeA, client, serverAddress)
+	if err != nil {
+		return nil, err
+	}
+
+	var results []dnsclient.Record
+
+	for _, answer := range response.Answer {
+		if record := recordFromDnsRR(answer); record != nil {
+			results = append(results, record)
+		}
+	}
+
+	return results, nil
+}
+
+func fetchTxtRecords(fqdn string, client *dns.Client, serverAddress string) ([]dnsclient.Record, error) {
+	response, err := performLookup(fqdn, dns.TypeTXT, client, serverAddress)
 	if err != nil {
 		return nil, err
 	}
@@ -57,6 +78,11 @@ func recordFromDnsRR(answer dns.RR) dnsclient.Record {
 		return &dnsclient.A{
 			Common:   base,
 			Ipv4Addr: answer.(*dns.A).A.String(),
+		}
+	case dns.TypeTXT:
+		return &dnsclient.TXT{
+			Common: base,
+			Txt:    strings.Join(answer.(*dns.TXT).Txt, "\n"),
 		}
 	}
 

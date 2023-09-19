@@ -69,3 +69,35 @@ func TestAssertHasCNAMERecordRaisesAnErrorWhenNoRecordWithMatchingIPAddressExist
 			"\tCNAME\ttarget1.example.com.\n",
 	)
 }
+
+func TestAssertHasTXTRecordDoesNotErrorWhenAMatchingRecordExists(t *testing.T) {
+	result, errorTrigger := createExampleResponse(t, []dnsclient.Record{
+		createExampleTXTRecord("target.example.com."),
+	})
+
+	result.AssertHasTXTRecord("target.example.com.")
+
+	errorTrigger.AssertNoErrorRaised()
+}
+
+func TestAssertHasTXTRecordRaisesAnErrorWhenNoARecordsExist(t *testing.T) {
+	result, errorTrigger := createExampleResponse(t, []dnsclient.Record{})
+
+	result.AssertHasTXTRecord("target.example.com.")
+
+	errorTrigger.AssertRaisedError("DNS assertion failed: no TXT records found")
+}
+
+func TestAssertHasTXTRecordRaisesAnErrorWhenNoRecordWithMatchingIPAddressExists(t *testing.T) {
+	result, errorTrigger := createExampleResponse(t, []dnsclient.Record{
+		createExampleTXTRecord("text-value-one"),
+	})
+
+	result.AssertHasTXTRecord("text-value-two")
+
+	errorTrigger.AssertRaisedError(
+		"DNS asserting failed: No TXT record with value text-value-two found for example.com..\n" +
+			"Records Found:\n" +
+			"\tTXT\ttext-value-one\n",
+	)
+}
