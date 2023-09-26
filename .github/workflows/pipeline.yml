@@ -23,4 +23,6 @@ jobs:
     needs:
       - run-tests
       - check-conventional-commits
-    uses: armakuni/github-actions/.github/workflows/dependabot-automerge.yml@v0.9.0
+    uses: armakuni/github-actions/.github/workflows/dependabot-automerge.yml@v0.10.0
+    with:
+      merge-strategy: rebase
