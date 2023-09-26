@@ -2,6 +2,15 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## [v0.3.1](https://github.com/armakuni/go-dns-assertions/compare/v0.3.0..v0.3.1) - 2023-09-26
+#### Bug Fixes
+- Use rebase auto merge strategy - ([72fc1ad](https://github.com/armakuni/go-dns-assertions/commit/72fc1ad5f82079bbbab1bbc4071da253bcf9953b)) - Tom Oram
+#### Continuous Integration
+- Add dependabot auto merge - ([29dbd62](https://github.com/armakuni/go-dns-assertions/commit/29dbd626d862dcddd599b49f6b68f3360f5e7c8f)) - Tom Oram
+- Add dependabot config - ([c2d47f0](https://github.com/armakuni/go-dns-assertions/commit/c2d47f030531a8a68d5f674d611e564feabbaeba)) - Tom Oram
+
+- - -
+
 ## [v0.3.0](https://github.com/armakuni/go-dns-assertions/compare/v0.2.0..v0.3.0) - 2023-09-19
 #### Continuous Integration
 - Run pipeline on pull requests - ([b2ae875](https://github.com/armakuni/go-dns-assertions/commit/b2ae875779a2442ba8624a5d784b260c5ffe5dab)) - Tom Oram
