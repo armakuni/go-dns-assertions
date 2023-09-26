@@ -17,3 +17,10 @@ jobs:
     if: github.ref == 'refs/heads/main'
     uses: armakuni/github-actions/.github/workflows/tag-and-release.yml@v0.4.1
     secrets: inherit
+
+  dependabot-merge:
+    if: ${{ github.actor == 'dependabot[bot]' && github.ref != 'refs/heads/main' && github.event_name == 'pull_request' }}
+    needs:
+      - run-tests
+      - check-conventional-commits
+    uses: armakuni/github-actions/.github/workflows/dependabot-automerge.yml@v0.9.0
