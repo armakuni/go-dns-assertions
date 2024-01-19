@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## [v0.3.3](https://github.com/armakuni/go-dns-assertions/compare/v0.3.2..v0.3.3) - 2024-01-19
+#### Bug Fixes
+- **(deps)** bump github.com/miekg/dns from 1.1.57 to 1.1.58 - ([f749d05](https://github.com/armakuni/go-dns-assertions/commit/f749d052dd76709b332de949ffb4e927e30fb73f)) - dependabot[bot]
+#### Continuous Integration
+- **(deps)** bump actions/setup-go from 4 to 5 - ([2a2d66e](https://github.com/armakuni/go-dns-assertions/commit/2a2d66eee16c2f861050dc5f167e01c68f60b1ae)) - dependabot[bot]
+
+- - -
+
 ## [v0.3.2](https://github.com/armakuni/go-dns-assertions/compare/v0.3.1..v0.3.2) - 2023-11-16
 #### Bug Fixes
 - **(deps)** bump github.com/miekg/dns from 1.1.56 to 1.1.57 - ([93e56aa](https://github.com/armakuni/go-dns-assertions/commit/93e56aab2cba7dce1d29a51af453bb346ba4cb9f)) - dependabot[bot]
