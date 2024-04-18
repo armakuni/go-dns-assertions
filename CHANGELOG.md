@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## [v0.3.5](https://github.com/armakuni/go-dns-assertions/compare/v0.3.4..v0.3.5) - 2024-04-18
+#### Bug Fixes
+- **(deps)** bump github.com/miekg/dns from 1.1.58 to 1.1.59 - ([fe198b0](https://github.com/armakuni/go-dns-assertions/commit/fe198b0bb9dc5fa7bf3ddcd12758292999ee4ca7)) - dependabot[bot]
+
+- - -
+
 ## [v0.3.4](https://github.com/armakuni/go-dns-assertions/compare/v0.3.3..v0.3.4) - 2024-03-04
 #### Bug Fixes
 - **(deps)** bump github.com/stretchr/testify from 1.8.4 to 1.9.0 - ([7bee914](https://github.com/armakuni/go-dns-assertions/commit/7bee91428f211da496f91569ea1a03048a56ccd9)) - dependabot[bot]
